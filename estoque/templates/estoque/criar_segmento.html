@@ -1,0 +1,39 @@
+<!-- templates/estoque/criar_segmento.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Criar Segmento</h2>
+    <form id="segmento-form" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Salvar</button>
+        <a href="{% url 'listar_produtos' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+<script>
+document.getElementById('segmento-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    let form = event.target;
+    let formData = new FormData(form);
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = "{% url 'listar_produtos' %}";
+        } else {
+            alert('Erro ao salvar o segmento: ' + data.error);
+        }
+    })
+    .catch(error => console.error('Erro:', error));
+});
+</script>
+{% endblock %}

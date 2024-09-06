@@ -1,0 +1,39 @@
+<!-- templates/estoque/editar_produto.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Editar Produto: {{ produto.nome }}</h2>
+    <form id="produto-form" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Gera todos os campos do formulário, incluindo quantidade -->
+        <button type="submit" class="btn btn-success">Atualizar</button>
+        <a href="{% url 'listar_produtos' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+<script>
+document.getElementById('produto-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    let form = event.target;
+    let formData = new FormData(form);
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = "{% url 'listar_produtos' %}";
+        } else {
+            alert('Erro ao atualizar o produto: ' + JSON.stringify(data.error));
+        }
+    })
+    .catch(error => console.error('Erro:', error));
+});
+</script>
+{% endblock %}

@@ -1,0 +1,53 @@
+<!-- gerenciador_estoque/templates/base.html -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Estoque</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome para o ícone de lupa -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <!-- Adicione no <head> do base.html ou em um arquivo CSS separado -->
+<!-- Adicione ao <head> do base.html ou em um arquivo CSS -->
+    <style>
+        .card-img-top-container {
+            height: 180px; /* Ajuste conforme necessário */
+            overflow: hidden;
+        }
+        .card-img-top {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Mantém as proporções e preenche o espaço */
+        }
+    </style>
+    
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'listar_produtos' %}">Estoque</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'listar_produtos' %}">Produtos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'criar_produto' %}">Adicionar Produto</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

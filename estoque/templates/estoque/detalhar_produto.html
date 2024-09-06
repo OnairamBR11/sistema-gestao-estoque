@@ -1,0 +1,116 @@
+<!-- templates/estoque/detalhar_produto.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Detalhes do Produto: {{ produto.nome }}</h2>
+    <div class="row">
+        <!-- Coluna para a imagem do produto -->
+        <div class="col-md-4">
+            {% if produto.imagem %}
+            <img src="{{ produto.imagem.url }}" class="img-fluid rounded" alt="{{ produto.nome }}" style="max-height: 300px; object-fit: cover;">
+            {% else %}
+            <img src="https://via.placeholder.com/300" class="img-fluid rounded" alt="Imagem indisponível" style="max-height: 300px; object-fit: cover;">
+            {% endif %}
+        </div>
+        <!-- Coluna para os detalhes do produto -->
+        <div class="col-md-8">
+            <p><strong>Descrição:</strong> {{ produto.descricao }}</p>
+            <p><strong>Segmento:</strong> {{ produto.segmento.nome }}</p>
+            <p><strong>Quantidade Atual:</strong> {{ produto.quantidade }}</p>
+            <p><strong>Preço Unitário:</strong> R$ {{ produto.preco_unitario }}</p>
+            <p><strong>Código de Barras:</strong> {{ produto.codigo_barras }}</p>
+            <p><strong>Data de Validade:</strong> {{ produto.data_vencimento }}</p>
+            
+            <!-- Botões de Editar e Deletar -->
+            <a href="{% url 'editar_produto' produto.id %}" class="btn btn-warning">Editar</a>
+            <form id="delete-form" method="POST" action="{% url 'deletar_produto' produto.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Deletar</button>
+            </form>
+            <a href="{% url 'listar_produtos' %}" class="btn btn-secondary">Voltar à Lista</a>
+        </div>
+    </div>
+
+    <h4 class="mt-4">Entradas de Estoque</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Código de Entrada</th>
+                <th>Quantidade</th>
+                <th>Data de Entrada</th>
+                <th>Data de Validade</th>
+                <th>Preço de Compra</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entrada in entradas %}
+            <tr>
+                <td>{{ entrada.codigo_entrada }}</td>
+                <td>{{ entrada.quantidade }}</td>
+                <td>{{ entrada.data_entrada }}</td>
+                <td>{{ entrada.data_vencimento }}</td>
+                <td>R$ {{ entrada.preco_compra }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">Nenhuma entrada registrada.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h4>Saídas de Estoque</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Data da Saída</th>
+                <th>Quantidade</th>
+                <th>Entrada Usada</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for saida in saidas %}
+            <tr>
+                <td>{{ saida.data_saida }}</td>
+                <td>{{ saida.quantidade }}</td>
+                <td>{{ saida.entrada.codigo_entrada }} (Vencimento: {{ saida.entrada.data_vencimento }})</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">Nenhuma saída registrada.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+document.getElementById('delete-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    if (confirm('Tem certeza que deseja deletar este produto?')) {
+        let form = event.target;
+        let formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Redireciona para a lista de produtos após exclusão bem-sucedida
+                window.location.href = "{% url 'listar_produtos' %}";
+            } else {
+                alert('Erro ao deletar o produto.');
+            }
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+});
+</script>
+{% endblock %}

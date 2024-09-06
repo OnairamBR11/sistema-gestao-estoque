@@ -1,0 +1,48 @@
+<!-- templates/estoque/listar_produtos.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Lista de Produtos</h2>
+
+    <!-- Formulário de Pesquisa -->
+    <form method="GET" action="{% url 'listar_produtos' %}" class="form-inline mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Pesquisar" value="{{ query }}">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <a href="{% url 'criar_produto' %}" class="btn btn-primary mb-3">Adicionar Produto</a>
+
+    <div class="row">
+        {% for produto in produtos %}
+        <div class="col-md-4 mb-4">
+            <div class="card" style="width: 18rem;">
+                <div class="card-img-top-container">
+                    {% if produto.imagem %}
+                    <img src="{{ produto.imagem.url }}" class="card-img-top img-fluid" alt="{{ produto.nome }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/150" class="card-img-top img-fluid" alt="Imagem indisponível">
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ produto.nome }}</h5>
+                    <p class="card-text"><strong>Segmento:</strong> {{ produto.segmento.nome }}</p>
+                    <p class="card-text"><strong>Quantidade:</strong> {{ produto.quantidade }}</p>
+                    <p class="card-text"><strong>Preço Unitário:</strong> R$ {{ produto.preco_unitario }}</p>
+                    <a href="{% url 'detalhar_produto' produto.id %}" class="btn btn-info">Detalhes</a>
+                    <a href="{% url 'adicionar_entrada' produto.id %}" class="btn btn-success">Adicionar Entrada</a>
+                    <a href="{% url 'saida_estoque' produto.id %}" class="btn btn-danger">Saída do Estoque</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>Nenhum produto encontrado.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
